@@ -14,6 +14,7 @@ public class Product {
 
     private String title;
 
+    @Column(length = 5000)
     private String description;
 
     private int mrpPrice;
@@ -46,12 +47,14 @@ public class Product {
 
     private boolean in_stock = true;
 
+    private boolean deleted = false;
+
     public Product() {
     }
 
     public Product(Long id, String title, String description, int mrpPrice, int sellingPrice, int discountPercent,
             int quantity, String color, List<String> images, int numRatings, Category category, Seller seller,
-            LocalDateTime createdAt, String sizes, List<Review> reviews, boolean in_stock) {
+            LocalDateTime createdAt, String sizes, List<Review> reviews, boolean in_stock, boolean deleted) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -68,6 +71,7 @@ public class Product {
         this.Sizes = sizes;
         this.reviews = reviews;
         this.in_stock = in_stock;
+        this.deleted = deleted;
     }
 
     public Long getId() {
@@ -196,5 +200,13 @@ public class Product {
 
     public void setIn_stock(boolean in_stock) {
         this.in_stock = in_stock;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

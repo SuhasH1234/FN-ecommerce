@@ -7,7 +7,7 @@ public class CreateProductRequest {
 
     private String title;
 
-    @Column(length = 2000)
+    @Column(length = 5000)
     private String description;
 
     private int mrpPrice;

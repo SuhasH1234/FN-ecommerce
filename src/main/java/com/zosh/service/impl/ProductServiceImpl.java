@@ -98,8 +98,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(Long productId) throws ProductException {
         Product product = findProductById(productId);
-        productRepository.delete(product);
-
+        product.setDeleted(true);
+        productRepository.save(product);
     }
 
     @Override
@@ -141,6 +141,8 @@ public class ProductServiceImpl implements ProductService {
             Integer pageNumber) {
         Specification<Product> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(criteriaBuilder.equal(root.get("deleted"), false));
 
             if (category != null) {
                 Join<Product, Category> categoryJoin = root.join("category");
@@ -211,6 +213,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getProductBySellerId(Long sellerId) {
-        return productRepository.findBySellerId(sellerId);
+        return productRepository.findBySellerIdAndDeletedFalse(sellerId);
     }
 }

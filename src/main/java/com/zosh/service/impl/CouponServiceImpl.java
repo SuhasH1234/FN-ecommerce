@@ -11,6 +11,7 @@ import com.zosh.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,6 +32,18 @@ public class CouponServiceImpl implements CouponService {
         this.cartRepository = cartRepository;
     }
 
+    @Scheduled(cron = "0 * * * * *") // Runs every minute for demonstration/testing
+    public void deactivateExpiredCoupons() {
+        LocalDate today = LocalDate.now();
+        List<Coupon> expiredCoupons = couponRepository.findAll();
+        for (Coupon coupon : expiredCoupons) {
+            if (coupon.isActive() && coupon.getValidityEndDate().isBefore(today)) {
+                coupon.setActive(false);
+                couponRepository.save(coupon);
+            }
+        }
+    }
+
     @Override
     public Cart applyCoupon(String code,
             double orderValue,
@@ -45,13 +58,16 @@ public class CouponServiceImpl implements CouponService {
         if (user.getUsedCoupons().contains(coupon)) {
             throw new CouponNotValidException("coupon already used");
         }
-        if (orderValue <= coupon.getMinimumOrderValue()) {
+        if (orderValue < coupon.getMinimumOrderValue()) {
             throw new CouponNotValidException("valid for minimum order value " + coupon.getMinimumOrderValue());
         }
 
         if (coupon.isActive() &&
-                LocalDate.now().isAfter(coupon.getValidityStartDate()) &&
-                LocalDate.now().isBefore(coupon.getValidityEndDate())
+                (LocalDate.now().isAfter(coupon.getValidityStartDate())
+                        || LocalDate.now().isEqual(coupon.getValidityStartDate()))
+                &&
+                (LocalDate.now().isBefore(coupon.getValidityEndDate())
+                        || LocalDate.now().isEqual(coupon.getValidityEndDate()))
 
         ) {
 
@@ -65,6 +81,9 @@ public class CouponServiceImpl implements CouponService {
             return cartRepository.save(cart);
             // return cart;
         }
+        System.out.println("Coupon validation failed: code=" + code + ", active=" + coupon.isActive() + ", start="
+                + coupon.getValidityStartDate() + ", end=" + coupon.getValidityEndDate() + ", today="
+                + LocalDate.now());
         throw new CouponNotValidException("coupon not valid...");
 
     }

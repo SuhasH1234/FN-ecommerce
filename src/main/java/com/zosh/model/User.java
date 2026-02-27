@@ -30,7 +30,7 @@ public class User {
     private USER_ROLE role;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "user_addresses", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "addresses_id"))
+    @JoinColumn(name = "user_id")
     private Set<Address> addresses = new HashSet<>();
 
     @JsonIgnore

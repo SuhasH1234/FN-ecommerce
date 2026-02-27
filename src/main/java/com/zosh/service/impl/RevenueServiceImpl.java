@@ -133,12 +133,22 @@ public class RevenueServiceImpl implements RevenueService {
 
     @Override
     public List<RevenueChart> getRevenueChartByType(String type, Long sellerId) {
-        if (type.equals("monthly")) {
-            return this.getMonthlyRevenueForChart(12, sellerId);
-        } else if (type.equals("daily")) {
-            return this.getDailyRevenueForChart(30, sellerId);
-        } else
-            return this.getHourlyRevenueForChart(sellerId);
+        switch (type.toLowerCase()) {
+            case "today":
+                return this.getHourlyRevenueForChart(sellerId);
+            case "7days":
+                return this.getDailyRevenueForChart(7, sellerId);
+            case "30days":
+                return this.getDailyRevenueForChart(30, sellerId);
+            case "3months":
+                return this.getMonthlyRevenueForChart(3, sellerId);
+            case "6months":
+                return this.getMonthlyRevenueForChart(6, sellerId);
+            case "12months":
+                return this.getMonthlyRevenueForChart(12, sellerId);
+            default:
+                return this.getHourlyRevenueForChart(sellerId);
+        }
     }
 
 }
