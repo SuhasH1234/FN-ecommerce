@@ -137,7 +137,7 @@ public class SellerController {
 
         String subject = "Fushion Nest Email Verification Code";
         String text = "Welcome to Fushion Nest, verify your account using this link ";
-        String frontend_url = "http://localhost:3000/verify-seller/";
+        String frontend_url = "http://localhost:5173/verify-seller/";
         emailService.sendVerificationOtpEmail(seller.getEmail(), verificationCode.getOtp(), subject,
                 text + frontend_url);
         return new ResponseEntity<>(savedSeller, HttpStatus.CREATED);
@@ -159,10 +159,11 @@ public class SellerController {
 
     @GetMapping("/report")
     public ResponseEntity<SellerReport> getSellerReport(
+            @RequestParam(required = false) String type,
             @RequestHeader("Authorization") String jwt) throws SellerException {
         String email = jwtProvider.getEmailFromJwtToken(jwt);
         Seller seller = sellerService.getSellerByEmail(email);
-        SellerReport report = sellerReportService.getSellerReport(seller);
+        SellerReport report = sellerReportService.getSellerReportByType(seller, type);
         return new ResponseEntity<>(report, HttpStatus.OK);
     }
 

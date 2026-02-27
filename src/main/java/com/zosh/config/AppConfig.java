@@ -28,20 +28,18 @@ public class AppConfig {
 
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(Authorize -> Authorize
-//                		.requestMatchers("/api/admin/**").hasAnyRole("SHOP_OWNER","ADMIN")
-                                .requestMatchers("/api/**").authenticated()
-                                .requestMatchers("/api/products/*/reviews").permitAll()
-                                .anyRequest().permitAll()
-                )
+                        // .requestMatchers("/api/admin/**").hasAnyRole("SHOP_OWNER","ADMIN")
+                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/api/products/*/reviews").permitAll()
+                        .anyRequest().permitAll())
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
-               
-		
-		return http.build();
-		
-	}
-	
+
+        return http.build();
+
+    }
+
     // CORS Configuration
     private CorsConfigurationSource corsConfigurationSource() {
         return new CorsConfigurationSource() {
@@ -50,7 +48,6 @@ public class AppConfig {
                 CorsConfiguration cfg = new CorsConfiguration();
                 cfg.setAllowedOrigins(Arrays.asList(
                         // "https://zosh-bazzar-zosh.vercel.app",
-                        "http://localhost:3000",
                         "http://localhost:5173"));
                 cfg.setAllowedMethods(Collections.singletonList("*"));
                 cfg.setAllowCredentials(true);
@@ -64,8 +61,8 @@ public class AppConfig {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public RestTemplate restTemplate() {

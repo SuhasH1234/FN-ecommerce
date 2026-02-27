@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public interface SellerReportService {
     SellerReport getSellerReport(Seller seller);
-    SellerReport updateSellerReport( SellerReport sellerReport);
+
+    SellerReport getSellerReportByType(Seller seller, String type);
+
+    SellerReport updateSellerReport(SellerReport sellerReport);
 
 }
